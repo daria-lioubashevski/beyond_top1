@@ -1,7 +1,9 @@
 import argparse
 from collections import defaultdict
+import sys
+print(sys.path)
 from plots import plot_rank_saturation_correspondence
-from utils import *
+from utils import * # DONT DO THIS
 from consts import *
 
 

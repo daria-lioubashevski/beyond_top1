@@ -32,7 +32,7 @@ All scripts support the following models: GPT2-XL (pre-trained and randomly init
   
   Example cmd using ViT model:
   ```
-  python analysis/order_of_saturation_layer_analysis.py -m vit -a rank_corr -n 200
+  python -m analysis.order_of_saturation_layer_analysis -m vit -a rank_corr -n 200
   ``` 
 * To probe the task information in the model's embeddings, first run `analysis/create_data_for_task_probing.py` to create training data and then use `analysis/run_task_transition_probing.py` to train and evaluate the classifier.
 

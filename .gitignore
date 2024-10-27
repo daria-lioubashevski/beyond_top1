@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS files
+.DS_Store
+
+# Python project files
+*.log
+*.pot
+*.pyo
+*.pyd
+*.pdb
+
+# Test and coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+*.cover
+coverage.xml
+*.lcov
+
+# PyInstaller files
+dist/
+build/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+.cache
+
+# Pyre type checker
+.pyre/
+
+# Cython debug symbols
+cython_debug/
+
+# Ignore model or large binary files
+*.pkl
+*.h5
+*.ckpt
+
+# Editor and IDE files
+.vscode/
+.idea/
+
+# Python egg files
+*.egg
+*.egg-info/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Local configuration files
+*.env
+*.ini
+*.cfg
+*.toml
+
+# Profiling data
+.prof
+
+*~
