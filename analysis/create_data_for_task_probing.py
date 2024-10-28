@@ -8,10 +8,10 @@ from collections import defaultdict
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
-    parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
-    parser.add_argument("-k", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)")
-    parser.add_argument("-o", "--output_path", type=str, help="path to pkl containing training data")
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"], required=True)
+    parser.add_argument("-n", "--num_samples", type=int, help="number of samples", required=True)
+    parser.add_argument("-k", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)", required=True)
+    parser.add_argument("-o", "--output_path", type=str, help="path to pkl containing training data", required=True)
     return parser.parse_args()
 
 
@@ -41,7 +41,7 @@ def main(args):
     samples = load_samples(args.model_name, args.num_samples)
     if "gpt2" in args.model_name:
         total_layer_embd_dict = {layer: defaultdict(list) for layer in range(MIN_LAYER_FOR_PROBING, num_layers)}
-        for j, sample in enumerate(samples):
+        for j, sample in tqdm(enumerate(samples)):
             indxs_per_layer, embds_per_layer, _ = extract_hidden_layers_reps(args.model_name, model,
                                                                              tokenizer, processor,
                                                                              [sample], num_layers,

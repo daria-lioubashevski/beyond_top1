@@ -1,6 +1,7 @@
 import argparse
 from collections import defaultdict
 import numpy as np
+from tqdm import tqdm
 from consts import KENDALLS_TAU_NUM_PERMUTATIONS
 from plots import plot_rank_saturation_correspondence
 from utils import load_model, load_samples, extract_hidden_layers_reps, calc_top_k_saturation_layers, write_results
@@ -89,10 +90,10 @@ def calc_strict_kendalls_tau_w_permutation_test(saturation_layer_arr, num_layers
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
-    parser.add_argument("-a", "--analysis", type=str, choices=["rank_corr", "kendalls_tau"])
-    parser.add_argument("-n", "--num_samples", type=int)
-    parser.add_argument("-o", "--output_path", type=str)
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"], required=True)
+    parser.add_argument("-a", "--analysis", type=str, choices=["rank_corr", "kendalls_tau"], required=True)
+    parser.add_argument("-n", "--num_samples", type=int, required=True)
+    parser.add_argument("-o", "--output_path", type=str, required=True)
     return parser.parse_args()
 
 
@@ -102,7 +103,7 @@ def main(args):
     samples = load_samples(args.model_name, args.num_samples)
     if "gpt2" in args.model_name:
         saturation_layer_arr_list = []
-        for sample in samples:
+        for sample in tqdm(samples):
             indxs_per_layer, _, _ = extract_hidden_layers_reps(args.model_name, model, tokenizer,
                                                             processor, [sample], num_layers)
             if indxs_per_layer is not None:

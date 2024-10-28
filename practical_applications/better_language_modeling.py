@@ -68,8 +68,8 @@ def compare_acc_of_late_vs_early_top_2_saturation(layer_number_results, output_p
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
-    parser.add_argument("-o", "--output_path", type=str)
+    parser.add_argument("-n", "--num_samples", type=int, help="number of samples", required=True)
+    parser.add_argument("-o", "--output_path", type=str, required=True)
     return parser.parse_args()
 
 

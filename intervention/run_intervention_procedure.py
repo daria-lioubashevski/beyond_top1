@@ -68,12 +68,12 @@ def hook_fn_lang(module, inputs, outputs, target_index, new_vector):
 def run_mode_forward_w_inter_multiple_layers_vit(model, num_layers, img_processor, chunk_imgs, chunk_interv_pairs):
     early_satur_layers, inter_layers, late_satur_layers, new_satur_layers, preds_unchanged = [], [], [], [], []
     num_adj_layers = NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING["vit"]
-    for pair in chunk_interv_pairs:
+    for pair in tqdm(chunk_interv_pairs):
         embds = pair['embds']
         img = chunk_imgs[pair["late_indx"]]
         inputs = img_processor(img, return_tensors="pt")
 
-        for i, embd in enumerate(embds):
+        for i, embd in tqdm(enumerate(embds)):
             new_vector = torch.tensor(embd)
             insert_layer = pair["early_layer"] - num_adj_layers + i + 1
             layer = model.vit.encoder.layer[
@@ -111,7 +111,7 @@ def run_mode_forward_w_inter_multiple_layers_vit(model, num_layers, img_processo
 def run_mode_forward_w_inter_multiple_layers_whisper(model, num_layers, processor, samples, pairs):
     early_satur_layers, inter_layers, late_satur_layers, new_satur_layers, preds_unchanged = [], [], [], [], []
     num_adj_layers = NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING["whisper"]
-    for pair in pairs:
+    for pair in tqdm(pairs):
         target_index = pair['late_indx']
         embds = pair['embds']
         audio_indx = int(pair['sample_ind'])
@@ -163,7 +163,7 @@ def run_mode_forward_w_inter_multiple_layers_whisper(model, num_layers, processo
 def run_mode_forward_w_inter_multiple_layers_gpt(model, num_layers, tokenizer, samples, pairs):
     early_satur_layers, inter_layers, late_satur_layers, new_satur_layers, preds_unchanged = [], [], [], [], []
     num_adj_layers = NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING["gpt2"]
-    for pair in pairs:
+    for pair in tqdm(pairs):
         target_index = pair['late_indx']
         embds = pair['embds']
         text = samples[pair["sample_ind"]]
@@ -215,9 +215,9 @@ def run_mode_forward_w_inter_multiple_layers_wrapper(model_name, model, num_laye
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper"])
-    parser.add_argument("-n", "--num_pairs", type=int, default=100)
-    parser.add_argument("-o", "--output_path", type=str)
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper"], required=True)
+    parser.add_argument("-n", "--num_pairs", type=int, default=100, required=True)
+    parser.add_argument("-o", "--output_path", type=str, required=True)
     return parser.parse_args()
 
 
@@ -269,7 +269,7 @@ def main(args):
 
     else:  # gpt2
         pairs = []
-        for ind, sample in enumerate(samples):
+        for ind, sample in tqdm(enumerate(samples)):
             if len(pairs) < args.num_pairs:
                 indxs_per_layer, embds_per_layer = extract_hidden_layers_reps(args.model_name, model, tokenizer,
                                                                               processor, [sample], num_layers,

@@ -93,9 +93,9 @@ def evalute_various_early_exit_methods(indxs_per_layer, embds_per_layer, probs_p
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
-    parser.add_argument("-c", "--clf_path", type=str, help="path to trained task classifier pickle")
-    parser.add_argument("-o", "--output_path", type=str)
+    parser.add_argument("-n", "--num_samples", type=int, help="number of samples", required=True)
+    parser.add_argument("-c", "--clf_path", type=str, help="path to trained task classifier pickle", required=True)
+    parser.add_argument("-o", "--output_path", type=str, required=True)
     return parser.parse_args()
 
 

@@ -137,7 +137,7 @@ def extract_hidden_layers_reps(model_name, model, tokenizer, processor, samples,
         probs_per_layer = [[] for _ in range(num_layers)]
 
     if model_name == "vit":
-        for ind, image in enumerate(samples):
+        for ind, image in tqdm(enumerate(samples)):
             inputs = processor(image, return_tensors="pt")
             with torch.no_grad():
                 torch.cuda.empty_cache()
@@ -161,7 +161,7 @@ def extract_hidden_layers_reps(model_name, model, tokenizer, processor, samples,
                 del hidden_states
 
     elif model_name == "whisper":
-        for ind in range(len(samples)):
+        for ind in tqdm(range(len(samples))):
             torch.cuda.empty_cache()
             audio_sample = samples[ind]["audio"]
             waveform = audio_sample["array"]

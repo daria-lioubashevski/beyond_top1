@@ -4,3 +4,4 @@ datasets==3.0.2
 torch
 matplotlib
 scipy
+tqdm

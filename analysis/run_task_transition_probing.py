@@ -112,11 +112,11 @@ def run_logistic_regression_probing(features, labels, num_tasks, kfolds=5, save_
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data_path", type=str, help="path to pkl containing training data")
-    parser.add_argument("-n", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)")
-    parser.add_argument("-k", "--kfolds", type=int, default=5, help="number of kfolds")
-    parser.add_argument("--save_clf", action="store_true", help="save trained probing classifier")
-    parser.add_argument("-o", "--output_path", type=str)
+    parser.add_argument("-d", "--data_path", type=str, help="path to pkl containing training data", required=True)
+    parser.add_argument("-n", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)", required=True)
+    parser.add_argument("-k", "--kfolds", type=int, default=5, help="number of kfolds", required=True)
+    parser.add_argument("--save_clf", action="store_true", help="save trained probing classifier", required=True)
+    parser.add_argument("-o", "--output_path", type=str, required=True)
     return parser.parse_args()
 
 

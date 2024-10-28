@@ -40,7 +40,7 @@ All scripts support the following models: GPT2-XL (pre-trained and randomly init
  
  Example usage for ViT model and rank correlation analysis over 200 images:
   ```
-  python -m analysis.order_of_saturation_layer_analysis -model vit -a rank_corr -n 200
+  python -m analysis.order_of_saturation_layer_analysis -model vit -a rank_corr -n 200 -o rank_corr.png
   ``` 
 * To probe the task information in the model's embeddings, first run `analysis/create_data_for_task_probing.py` to create training data.
   
