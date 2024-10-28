@@ -1,6 +1,6 @@
 pyarrow==15.0.2
 transformers==4.46.0
 datasets==3.0.2
-torch @ https://download.pytorch.org/whl/cu121_full/torch-2.5.0%2Bcu121-cp310-cp310-linux_x86_64.whl
+torch
 matplotlib
 scipy
