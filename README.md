@@ -40,7 +40,7 @@ All scripts support the following models: GPT2-XL (pre-trained and randomly init
  
  Example usage for ViT model and rank correlation analysis over 200 images:
   ```
-  python -m analysis.order_of_saturation_layer_analysis.py -model vit -a rank_corr -n 200
+  python -m analysis.order_of_saturation_layer_analysis -model vit -a rank_corr -n 200
   ``` 
 * To probe the task information in the model's embeddings, first run `analysis/create_data_for_task_probing.py` to create training data.
   
@@ -62,8 +62,8 @@ All scripts support the following models: GPT2-XL (pre-trained and randomly init
   
   Example usage with GPT2 model for tasks 1 to 5 over 50 texts:
   ```
-  python -m analysis.create_data_for_task_probing.py -model gpt2 -n 50 -k 5 -o gpt2_embds_for_probing.pkl
-  python -m analysis.run_task_transition_probing.py -n 4 -k 5 -d gpt2_embds_for_probing.pkl -o probing_results.txt
+  python -m analysis.create_data_for_task_probing -model gpt2 -n 50 -k 5 -o gpt2_embds_for_probing.pkl
+  python -m analysis.run_task_transition_probing -n 4 -k 5 -d gpt2_embds_for_probing.pkl -o probing_results.txt
   ``` 
 
 ### 2. Intervention
@@ -78,7 +78,7 @@ To perform casusal intervention on the model activations causing it to switch fr
 
  Example usage for Whisper model over 100 pairs:
   ```
-  python -m intervention.run_intervention_procedure.py -model whisper -n 100 -o interv_result.png
+  python -m intervention.run_intervention_procedure -model whisper -n 100 -o interv_result.png
   ``` 
 
 ### 3. Practical Applications
@@ -93,7 +93,7 @@ All script currently support only GPT-2 model.
 
  Example usage with already trained task index classifier:
  ```
-  python -m practical_applications.new_early_exit.py -n 10 -c GPT2_top5_clf.pkl -o ee_compar.png
+  python -m practical_applications.new_early_exit -n 10 -c GPT2_top5_clf.pkl -o ee_compar.png
  ```
 
 * To see how the saturation layer affects language modeling use  `practical_applications/better_language_modeling.py`.
@@ -106,7 +106,7 @@ All script currently support only GPT-2 model.
 
   Example usage:
  ```
-  python -m practical_applications.better_language_modeling.py -n 20 -o lang_modeling.txt
+  python -m practical_applications.better_language_modeling -n 20 -o lang_modeling.txt
  ```
 
 ## Citation
