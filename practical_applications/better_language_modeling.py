@@ -3,6 +3,8 @@ from collections import defaultdict
 import math
 import numpy as np
 from scipy.stats import norm
+from tqdm import tqdm
+
 from utils import load_model, load_samples, tokenize_text, extract_hidden_layers_reps, \
     calc_top_k_saturation_layers, write_results
 

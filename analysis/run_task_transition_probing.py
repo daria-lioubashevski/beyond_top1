@@ -6,6 +6,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import balanced_accuracy_score, roc_auc_score, confusion_matrix
 from sklearn.model_selection import KFold
+from tqdm import tqdm
+
 from consts import MIN_NUM_EMBDS_IN_CLASS
 from utils import write_results
 

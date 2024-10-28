@@ -1,4 +1,5 @@
 import argparse
+from tqdm import tqdm
 
 from consts import MIN_LAYER_FOR_PROBING
 from utils import load_model, load_samples, extract_hidden_layers_reps, calc_top_k_saturation_layers

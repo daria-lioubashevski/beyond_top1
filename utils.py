@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, \
     WhisperProcessor, WhisperForConditionalGeneration, AutoImageProcessor, ViTForImageClassification
 from datasets import load_dataset

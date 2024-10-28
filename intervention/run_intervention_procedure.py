@@ -2,6 +2,7 @@ import argparse
 import torch
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 from consts import MIN_DIFF_IN_SATUR_LAYERS_FOR_INTERV_MAPPING, NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING, \
     INTERV_RESULTS_CSV_NAME

@@ -1,6 +1,8 @@
 import argparse
 import numpy as np
 import pickle
+from tqdm import tqdm
+
 from consts import SOFTMAX_THRS_FOR_EE, COS_SIM_THR_FOR_EE
 from plots import plot_comparison_between_early_exit_methods
 from utils import load_model, load_samples, tokenize_text, extract_hidden_layers_reps, calc_top1_satur_layer
@@ -107,7 +109,7 @@ def main(args):
     with open(args.clf_path, 'rb') as fp:
         clf = pickle.load(fp)
     all_acc_and_speedup_dicts = []
-    for sample in samples:
+    for sample in tqdm(samples):
         input_ids = tokenize_text(tokenizer, sample)
         indxs_per_layer, embds_per_layer, probs_per_layer = extract_hidden_layers_reps(model_name, model,
                                                                                        tokenizer, processor,
