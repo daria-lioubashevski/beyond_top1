@@ -1,8 +1,9 @@
 import argparse
 from collections import defaultdict
+import numpy as np
+from consts import KENDALLS_TAU_NUM_PERMUTATIONS
 from plots import plot_rank_saturation_correspondence
-from utils import *
-from consts import *
+from utils import load_model, load_samples, extract_hidden_layers_reps, calc_top_k_saturation_layers, write_results
 
 
 def calc_rank_from_satur_layers_arr(saturation_layer_arr, num_layers, k=5):
@@ -73,22 +74,25 @@ def run_permutation_test(saturation_layer_arr, num_layers, actual_tau):
         mean_taus.append(calc_mean_kendalls_tau(saturation_layer_arr, num_layers, perm=True))
     mean_taus = np.array(mean_taus)
     if max(mean_taus) < actual_tau:
-        print("p < 0.001")
+        return "p < 0.001"
     else:
-        print(f"p = {len(np.where(mean_taus >= actual_tau)[0]) / len(mean_taus)}")
+        return f"p = {len(np.where(mean_taus >= actual_tau)[0]) / len(mean_taus)}"
 
 
-def calc_strict_kendalls_tau_w_permutation_test(saturation_layer_arr, num_layers):
+def calc_strict_kendalls_tau_w_permutation_test(saturation_layer_arr, num_layers, output_path):
     actual_tau = calc_mean_kendalls_tau(saturation_layer_arr, num_layers)
-    print(f"stricter kendall's tau value: {round(actual_tau, 3)}")
-    run_permutation_test(saturation_layer_arr, num_layers, actual_tau)
+    kendall_tau_result = f"stricter kendall's tau value: {round(actual_tau, 3)}"
+    perm_test_result = run_permutation_test(saturation_layer_arr, num_layers, actual_tau)
+    results = [kendall_tau_result, perm_test_result]
+    write_results(results, output_path)
 
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
     parser.add_argument("-a", "--analysis", type=str, choices=["rank_corr", "kendalls_tau"])
     parser.add_argument("-n", "--num_samples", type=int)
+    parser.add_argument("-o", "--output_path", type=str)
     return parser.parse_args()
 
 
@@ -109,10 +113,11 @@ def main(args):
                                                         processor, samples, num_layers)
         saturation_layer_arr = calc_top_k_saturation_layers(indxs_per_layer, num_layers)
     if args.analysis == "kendalls_tau":
-        calc_strict_kendalls_tau_w_permutation_test(saturation_layer_arr, num_layers)
+        calc_strict_kendalls_tau_w_permutation_test(saturation_layer_arr, num_layers, args.output_path)
     else:  # rank_corr
         satur_layer_rank_corr_dict = calc_rank_from_satur_layers_arr(saturation_layer_arr, num_layers)
-        plot_rank_saturation_correspondence(satur_layer_rank_corr_dict)
+        plot_rank_saturation_correspondence(satur_layer_rank_corr_dict, args.output_path)
+    print(f"Reminder: your results are at {args.output_path}")
 
 
 if __name__ == '__main__':

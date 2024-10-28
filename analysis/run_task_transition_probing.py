@@ -6,7 +6,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import balanced_accuracy_score, roc_auc_score, confusion_matrix
 from sklearn.model_selection import KFold
-from consts import *
+from consts import MIN_NUM_EMBDS_IN_CLASS
+from utils import write_results
 
 
 def load_train_data(pkl_path, num_tasks):
@@ -115,6 +116,7 @@ def args_parse():
     parser.add_argument("-n", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)")
     parser.add_argument("-k", "--kfolds", type=int, default=5, help="number of kfolds")
     parser.add_argument("--save_clf", action="store_true", help="save trained probing classifier")
+    parser.add_argument("-o", "--output_path", type=str)
     return parser.parse_args()
 
 
@@ -124,20 +126,22 @@ def main(args):
                                                                                               args.num_tasks,
                                                                                               args.kfolds,
                                                                                               args.save_clf)
-    print('------------------------- Layer Embeddings -------------------------')
-    print(f'Overall average accuracy: {round(avg_acc, 3)} \u00B1 {round(acc_ste, 4)}')
-    print(f'Average accuracy per task: {[round(x, 3) for x in avg_acc_per_class]}')
-    print(f'Average ROC-AUC per task: {[round(x, 3) for x in avg_roc_auc_scores]}\n\n')
+    results = []
+    results.append('------------------------- Layer Embeddings -------------------------')
+    results.append(f'Overall average accuracy: {round(avg_acc, 3)} \u00B1 {round(acc_ste, 4)}')
+    results.append(f'Average accuracy per task: {[round(x, 3) for x in avg_acc_per_class]}')
+    results.append(f'Average ROC-AUC per task: {[round(x, 3) for x in avg_roc_auc_scores]}\n\n')
 
     random_features = create_random_features(features, labels, args.num_tasks)
     avg_acc, acc_ste, avg_roc_auc_scores, avg_acc_per_class = run_logistic_regression_probing(random_features, labels,
                                                                                               args.num_tasks,
                                                                                               args.kfolds,
                                                                                               args.save_clf)
-    print('------------------------- Random Embeddings -------------------------')
-    print(f'Overall average accuracy: {round(avg_acc, 3)} \u00B1 {round(acc_ste, 4)}')
-    print(f'Average accuracy per task: {[round(x, 3) for x in avg_acc_per_class]}')
-    print(f'Average ROC-AUC per task: {[round(x, 3) for x in avg_roc_auc_scores]}')
+    results.append('------------------------- Random Embeddings -------------------------')
+    results.append(f'Overall average accuracy: {round(avg_acc, 3)} \u00B1 {round(acc_ste, 4)}')
+    results.append(f'Average accuracy per task: {[round(x, 3) for x in avg_acc_per_class]}')
+    results.append(f'Average ROC-AUC per task: {[round(x, 3) for x in avg_roc_auc_scores]}')
+    write_results(results, args.output_path)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,10 @@
 import argparse
 from collections import defaultdict
 import math
+import numpy as np
 from scipy.stats import norm
-from utils import *
+from utils import load_model, load_samples, tokenize_text, extract_hidden_layers_reps, \
+    calc_top_k_saturation_layers, write_results
 
 
 def calc_acc_of_late_vs_early_top_2_saturation(indxs_per_layer, num_layers, chunk_input_ids):
@@ -41,16 +43,17 @@ def calculate_proportion_test(n1, x1, n2, x2):
     return p_value
 
 
-def compare_acc_of_late_vs_early_top_2_saturation(layer_number_results):
+def compare_acc_of_late_vs_early_top_2_saturation(layer_number_results, output_path):
+    results = []
     late_top2_acc = round(
         100 * layer_number_results["second_finalizes_in_last_pred_correct_count"] / layer_number_results[
             "second_finalizes_in_last_count"], 3)
-    print(f"{late_top2_acc}% of correct predictions for top-2 saturation in final layer")
+    results.append(f"{late_top2_acc}% of correct predictions for top-2 saturation in final layer")
 
     early_top2_acc = round(
         100 * layer_number_results["second_finalizes_early_pred_correct_count"] / layer_number_results[
             "second_finalizes_early_count"], 3)
-    print(f"{early_top2_acc}% of correct predictions for early top-2 saturaiton (at least 7 layers before last)")
+    results.append(f"{early_top2_acc}% of correct predictions for early top-2 saturaiton (at least 7 layers before last)")
 
     count = [layer_number_results["second_finalizes_in_last_count"],
              layer_number_results["second_finalizes_early_count"]]
@@ -59,12 +62,14 @@ def compare_acc_of_late_vs_early_top_2_saturation(layer_number_results):
 
     pval = calculate_proportion_test(count[0], nobs[0], count[1], nobs[1])
     pval = "< 0.001" if pval < 0.001 else round(pval, 3)
-    print(f"t-test p-value {pval}")
+    results.append(f"t-test p-value {pval}")
+    write_results(results, output_path)
 
 
 def args_parse():
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
+    parser.add_argument("-o", "--output_path", type=str)
     return parser.parse_args()
 
 
@@ -83,7 +88,7 @@ def main(args):
             cur_results = calc_acc_of_late_vs_early_top_2_saturation(indxs_per_layer, num_layers, input_ids)
             for k, val in cur_results.items():
                 all_results[k] += val
-    compare_acc_of_late_vs_early_top_2_saturation(all_results)
+    compare_acc_of_late_vs_early_top_2_saturation(all_results, args.output_path)
 
 
 if __name__ == '__main__':

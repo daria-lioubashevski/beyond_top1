@@ -1,7 +1,9 @@
 import argparse
+import numpy as np
 import pickle
+from consts import SOFTMAX_THRS_FOR_EE, COS_SIM_THR_FOR_EE
 from plots import plot_comparison_between_early_exit_methods
-from utils import *
+from utils import load_model, load_samples, tokenize_text, extract_hidden_layers_reps, calc_top1_satur_layer
 from sklearn.metrics import pairwise_distances
 
 
@@ -93,6 +95,7 @@ def args_parse():
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
     parser.add_argument("-c", "--clf_path", type=str, help="path to trained task classifier pickle")
+    parser.add_argument("-o", "--output_path", type=str)
     return parser.parse_args()
 
 
@@ -116,7 +119,7 @@ def main(args):
                                                                       probs_per_layer, num_layers,
                                                                       input_ids, clf)
             all_acc_and_speedup_dicts.append(acc_and_speedup_dict)
-    plot_comparison_between_early_exit_methods(all_acc_and_speedup_dicts)
+    plot_comparison_between_early_exit_methods(all_acc_and_speedup_dicts, args.output_path)
 
 
 if __name__ == '__main__':

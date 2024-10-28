@@ -1,9 +1,10 @@
 import numpy as np
 import torch
-from consts import *
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, \
     WhisperProcessor, WhisperForConditionalGeneration, AutoImageProcessor, ViTForImageClassification
 from datasets import load_dataset
+
+from consts import MODEL_NAME_MAPPING, TEXT_INPUT_LENGTH, MAX_TOP_1_SATUR_LAYER_RATIO
 
 
 def load_model(model_name):
@@ -256,3 +257,8 @@ def calc_top_k_saturation_layers(indxs_per_layer, num_layers, top_k=5, filter_re
         return saturation_layer_arr[:, rel_indxs_mask]
     else:
         return saturation_layer_arr
+
+
+def write_results(results, output_path):
+    with open(output_path, "w+") as f:
+        f.writelines(results)

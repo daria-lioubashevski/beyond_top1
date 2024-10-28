@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from consts import *
+import math
+from scipy import stats
 
 
-def plot_rank_saturation_correspondence(satur_layer_rank_corr_dict, k=5):
+def plot_rank_saturation_correspondence(satur_layer_rank_corr_dict, output_path, k=5):
     colors = ['forestgreen', 'cornflowerblue', 'mediumpurple', 'indianred', 'darkorange']
     fig, ax = plt.subplots()
     ax.set_ylabel('saturation layer rank', fontsize=16)
@@ -35,10 +37,10 @@ def plot_rank_saturation_correspondence(satur_layer_rank_corr_dict, k=5):
 
     ax = plt.gca()
     ax.set_ylim([0, math.ceil(max_mean + 0.2)])
-    plt.savefig("satur_rank_corr.png")
+    plt.savefig(output_path)
 
 
-def plot_comparison_between_early_exit_methods(all_acc_speedup_dicts):
+def plot_comparison_between_early_exit_methods(all_acc_speedup_dicts, output_path):
     baseline = []
     oracle_acc = []
     oracle_speedup = []
@@ -81,10 +83,10 @@ def plot_comparison_between_early_exit_methods(all_acc_speedup_dicts):
     ax.set_ylabel('Accuracy', fontsize=16)
     ax.set_xlabel('Speedup ratio', fontsize=16)
     ax.legend(fontsize=12)
-    fig.savefig("early_exit_methods_compar.png")
+    fig.savefig(output_path)
 
 
-def plot_interv_results(model_name, layers_df):
+def plot_interv_results(model_name, layers_df, output_path):
     num_adj_layers = NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING[model_name]
     layers_df['distance_from_satur_layer'] = layers_df['inter_layer'] - layers_df['early_satur_layer'] - 1
     layers_df['new_satur_layer_match_inter_layer'] = np.logical_and(
@@ -108,4 +110,4 @@ def plot_interv_results(model_name, layers_df):
     ax.set_ylabel('% of examples', fontsize=16)
     ax.tick_params(axis='both', which='major', labelsize=12)
     ax.set_xticks(categories)
-    fig.savefig("interv_results_plot.png")
+    fig.savefig(output_path)

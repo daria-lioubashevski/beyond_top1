@@ -17,8 +17,8 @@ This repository provides code and resources for our paper, [Looking Beyond The T
 ### Steps
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/daria-lioubashevski/saturation_beyond_top1
-   cd saturation_beyond_top1
+   git clone https://github.com/daria-lioubashevski/beyond_top1
+   cd beyond_top1
 
 2. Install required Python packages:
     ```bash
@@ -29,43 +29,84 @@ This repository provides code and resources for our paper, [Looking Beyond The T
 ### 1. Analysis
 All scripts support the following models: GPT2-XL (pre-trained and randomly initalized), ViT-L/16, Whisper-large.
 * To investigate the order of saturation layers for top-k tokens use `analysis/order_of_saturation_layer_analysis.py`.
-  
-  Example cmd using ViT model:
-  ```
-  python analysis/order_of_saturation_layer_analysis.py -m vit -a rank_corr -n 200
-  ``` 
-* To probe the task information in the model's embeddings, first run `analysis/create_data_for_task_probing.py` to create training data and then use `analysis/run_task_transition_probing.py` to train and evaluate the classifier.
 
-  Example cmds using GPT2 model:
+**Arguments:**
+
+- `-model` or `--model_name` (str): The model to analyze. Choose from `gpt2`, `vit`, `whisper`, or `random_gpt2`.
+- `-a` or `--analysis` (str): The type of analysis to perform. Options are `rank_corr` or `kendalls_tau`.
+- `-n` or `--num_samples` (int): Number of samples to use in the analysis.
+- `-o` or `--output_path` (str): Path to save the analysis results.
+
+ 
+ Example usage for ViT model and rank correlation analysis over 200 images:
   ```
-  python analysis/create_data_for_task_probing.py -m gpt2 -n 50 -k 5 -o gpt2_embds_for_probing.pkl
-  python analysis/run_task_transition_probing.py -n 4 -k 5 -d gpt2_embds_for_probing.pkl
+  python -m analysis.order_of_saturation_layer_analysis.py -model vit -a rank_corr -n 200
+  ``` 
+* To probe the task information in the model's embeddings, first run `analysis/create_data_for_task_probing.py` to create training data.
+  
+**Arguments:**
+- `-model` or `--model_name` (str): The model to analyze. Choose from `gpt2`, `vit`, `whisper`, or `random_gpt2`.
+- `-n` or `--num_samples` (int): Number of samples to use.
+- `-k` or `--num_tasks` (int): number of tasks (should probably be between 3 and 5).
+- `-o` or `--output_path` (str): Path to save the pkl containing the extracted embeddings.
+  
+
+  Then use `analysis/run_task_transition_probing.py` to train and evaluate the classifier.
+  
+**Arguments:**
+- `-d` or `--data_path` (str): Path to data (extracted embeddings) for probing. 
+- `-n` or `--num_tasks` (int): number of tasks (should probably be between 3 and 5).
+- `-k` or `--kfolds` (int): number of kfolds in training.
+- `-o` or `--output_path` (str): Path to save the analysis results.
+
+  
+  Example usage with GPT2 model for tasks 1 to 5 over 50 texts:
+  ```
+  python -m analysis.create_data_for_task_probing.py -model gpt2 -n 50 -k 5 -o gpt2_embds_for_probing.pkl
+  python -m analysis.run_task_transition_probing.py -n 4 -k 5 -d gpt2_embds_for_probing.pkl -o probing_results.txt
   ``` 
 
 ### 2. Intervention
 All scripts support the following models: GPT2-XL (pre-trained only), ViT-L/16, Whisper-large.
 To perform casusal intervention on the model activations causing it to switch from task-1 to task-2 use `analysis/run_intervention_procedure.py`
 
- Example cmds using Whisper model:
+**Arguments:**
+
+- `-model` or `--model_name` (str): The model to analyze. Choose from `gpt2`, `vit`, `whisper`, or `random_gpt2`.
+- `-n` or `--num_pairs` (int): Number of pairs to use in intervention procedure.
+- `-o` or `--output_path` (str): Path to save the intervention figure.
+
+ Example usage for Whisper model over 100 pairs:
   ```
-  python intervention/run_intervention_procedure.py -m whisper -n 100
+  python -m intervention.run_intervention_procedure.py -model whisper -n 100 -o interv_result.png
   ``` 
 
 ### 3. Practical Applications
 All script currently support only GPT-2 model.
-* To compare the performance of our new early exit measure against existing ones run 
+* To compare the performance of our new early exit measure against existing ones in terms of performance/efficiency tradeoff run 
 `practical_applications/new_early_exit.py`.
 
- Example cmds using already trained task index classifier:
+**Arguments:**
+
+- `-n` or `--num_samples` (int): Number of samples (texts) to use in comparison.
+- `-o` or `--output_path` (str): Path to save resulting figure.
+
+ Example usage with already trained task index classifier:
  ```
-  python practical_applications/new_early_exit.py -n 10 -c GPT2_top5_clf.pkl
+  python -m practical_applications.new_early_exit.py -n 10 -c GPT2_top5_clf.pkl -o ee_compar.png
  ```
 
-* To show how the saturation layer affects language modeling use  `practical_applications/better_language_modeling.py`.
+* To see how the saturation layer affects language modeling use  `practical_applications/better_language_modeling.py`.
 
-  Example cmd:
+**Arguments:**  
+
+- `-n` or `--num_samples` (int): Number of samples (texts) to use in comparison.
+- `-o` or `--output_path` (str): Path to save results. 
+
+
+  Example usage:
  ```
-  python practical_applications/better_language_modeling.py -n 20
+  python -m practical_applications.better_language_modeling.py -n 20 -o lang_modeling.txt
  ```
 
 ## Citation

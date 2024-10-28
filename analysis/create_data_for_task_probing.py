@@ -1,22 +1,22 @@
 import argparse
-import numpy as np
-from utils import *
-from consts import *
+
+from consts import MIN_LAYER_FOR_PROBING
+from utils import load_model, load_samples, extract_hidden_layers_reps, calc_top_k_saturation_layers
 import pickle
 from collections import defaultdict
 
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output_path", type=str, help="path to pkl containing training data")
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
     parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
     parser.add_argument("-k", "--num_tasks", type=int, help="number of tasks (should probably be between 3 to 5)")
-    parser.add_argument("-m", "--model_name", type=str, choices=["gpt2", "vit", "whisper", "random_gpt2"])
+    parser.add_argument("-o", "--output_path", type=str, help="path to pkl containing training data")
     return parser.parse_args()
 
 
 def get_layer_embds_for_task_transition(indxs_per_layer, embds_per_layer, num_layers, k=5):
-    saturation_layer_arr = calculate_top_k_saturation_layers(indxs_per_layer, num_layers)
+    saturation_layer_arr = calc_top_k_saturation_layers(indxs_per_layer, num_layers)
     min_layer, max_layer = MIN_LAYER_FOR_PROBING, num_layers
 
     layer_embd_dict = {layer: defaultdict(list) for layer in range(min_layer, max_layer)}
@@ -57,10 +57,10 @@ def main(args):
         indxs_per_layer, embds_per_layer, _ = extract_hidden_layers_reps(args.model_name, model, tokenizer,
                                                                          processor, samples, num_layers,
                                                                          extract_embds=True)
-        layer_embd_dict = get_layer_embds_for_task_transition(indxs_per_layer, embds_per_layer, num_layers,
+        total_layer_embd_dict = get_layer_embds_for_task_transition(indxs_per_layer, embds_per_layer, num_layers,
                                                               args.num_tasks)
     with open(args.output_path, "wb") as f:
-        pickle.dump(layer_embd_dict, f)
+        pickle.dump(total_layer_embd_dict, f)
 
 
 if __name__ == '__main__':

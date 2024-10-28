@@ -1,8 +1,14 @@
 import argparse
 import torch
 import pandas as pd
+import numpy as np
+
+from consts import MIN_DIFF_IN_SATUR_LAYERS_FOR_INTERV_MAPPING, NUM_ADJACENT_LAYERS_FOR_INTERV_MAPPING, \
+    INTERV_RESULTS_CSV_NAME
 from plots import plot_interv_results
-from utils import *
+from utils import load_model, load_samples, extract_hidden_layers_reps, calc_top1_satur_layer, \
+    get_indxs_from_hidden_layers_vit, calc_top1_satur_layer_single_img, get_indxs_from_hidden_layers_whisper, \
+    tokenize_text, calc_num_tokens_per_sample_whisper, get_indxs_from_hidden_layers_gpt
 
 
 def is_pair_fit_for_interv(model_name, num_layers, model_preds, num_layer_where_decision_finalizes, i, j):
@@ -175,8 +181,7 @@ def run_mode_forward_w_inter_multiple_layers_gpt(model, num_layers, tokenizer, s
             hook.remove()
 
             hidden_states = outputs.hidden_states
-            all_layer_indxs = get_indices_from_hidden_layers(model, tokenizer, hidden_states, num_layers,
-                                                             model_name="gpt2")
+            all_layer_indxs = get_indxs_from_hidden_layers_gpt(model, tokenizer, hidden_states, num_layers)
             del outputs, hidden_states
 
             num_layer_where_decision_finalizes = calc_top1_satur_layer(all_layer_indxs, num_layers)
@@ -210,8 +215,9 @@ def run_mode_forward_w_inter_multiple_layers_wrapper(model_name, model, num_laye
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model_name", type=str, choices=["gpt2", "vit", "whisper"])
+    parser.add_argument("-model", "--model_name", type=str, choices=["gpt2", "vit", "whisper"])
     parser.add_argument("-n", "--num_pairs", type=int, default=100)
+    parser.add_argument("-o", "--output_path", type=str)
     return parser.parse_args()
 
 
@@ -279,7 +285,7 @@ def main(args):
     run_mode_forward_w_inter_multiple_layers_wrapper(args.model_name, model, num_layers, tokenizer,
                                                      processor, samples, pairs)
     interv_results_df = pd.read_csv(INTERV_RESULTS_CSV_NAME)
-    plot_interv_results(args.model_name, interv_results_df)
+    plot_interv_results(args.model_name, interv_results_df, args.output_path)
 
 
 if __name__ == '__main__':
