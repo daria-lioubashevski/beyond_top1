@@ -111,3 +111,10 @@ All script currently support only GPT-2 model.
 
 ## Citation
 To cite our work, please use the following BibTeX entry:
+```bibtex
+@article{lioubashevski2024looking,
+  title={Looking Beyond The Top-1: Transformers Determine Top Tokens In Order},
+  author={Lioubashevski, Daria and Schlank, Tomer and Stanovsky, Gabriel and Goldstein, Ariel},
+  journal={arXiv preprint arXiv:2410.20210},
+  year={2024}
+}
